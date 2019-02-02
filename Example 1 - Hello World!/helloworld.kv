@@ -1,15 +1,16 @@
 # kivy 1.10.1
 
+# Main layout is a Box Layout
 <Layout>
 	orientation: 'horizontal'
 	padding: 20
-
+	# Button is given id "hw", text "Hellow World", and behavior defined in python file.
 	Button:
 		id: hw
 		text: 'Hello World! (click me!)'
 		font_size: 25
 		on_release: root.popup()
-
+	# Slider activates root.recolor() "on_value", or when value is changed.
 	Slider:
 		id: bgcolor
 		orientation: 'vertical'

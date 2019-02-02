@@ -1,0 +1,147 @@
+#:kivy 1.10.1
+# Kivy for DEMO: PIL VISUALIZER
+# Kevin Xie CS550 Healey
+#
+# Here, we have the widgets and their properties. The behaviors and functions
+# are defined more thoroughly in the .py file, but it is important to note
+# the presence of ids for each widget. This makes it easier
+# to find the properties of widgets in the python file.
+# 
+# On my honor, I have neither given nor received unauthorized aid.
+# Kevin Xie '19
+
+#MainUI Class -- home to all of the widgets! -- this is a horizontal Box Layout comprized of the two accordian tabs.
+<MainUI>:
+	orientation: 'horizontal'
+	# Accordian tabs separate two windows of UI -- in this case, the controls and the visualization
+	Accordion:
+		orientation: 'horizontal'
+		# Accordian one holds all the controls
+		AccordionItem:
+			title: 'Manipulation'
+			collapse: False # by default, Accordian one is open.
+			# Within accordian one, everything is organized in a Box Layout (left-to-right)
+			BoxLayout:
+				orientation: 'horizontal'
+				padding: 10 # this will separate the widgets from the edges and make them look less crammed
+				spacing: 5
+#-----------------------------------------------------------------------------------------------------------
+				# First column box layout within the horizontal boxes
+				BoxLayout:
+					orientation: 'vertical'
+
+					# File chooser cluster includes the native file chooser widget and an "open" button that loads the chosen file
+					FileChooser:
+						id: filechooser
+						FileChooserIconLayout
+					BoxLayout:
+						orientation: 'horizontal'
+						size_hint_y: 0.2
+						Label:
+						Button:
+							text: 'Open'
+							on_release: root.load(filechooser.path, filechooser.selection) # this behavior is defined in the python code.
+
+					# Variables cluster determines what modifiers are applied to the image. (haltoning, solarizing etc.)
+					GridLayout:
+						cols: 2
+						spacing: '8dp'
+						height: '48dp'
+						CheckBox:
+							id:halftone
+							height: '48dp'
+							on_active: root.halftone(self.active)
+						# A label is a textbox widget that is read-only, used as titles for other widgets or elements
+						Label:
+							text: 'Halftone'
+						CheckBox:
+							id: solarize
+							height: '48dp'
+							on_active: root.solarize(self.active)
+						Label:
+							text: 'Solarize'
+						CheckBox:
+							id: bw
+							height: '48dp'
+							on_active: root.bwConvert(self.active)
+						Label:
+							text: 'Grayscale'
+						CheckBox:
+							height: '48dp'
+							group: 'g2'# checkboxes in a certain group become "radio checkboxes" so only one checkbox in the group can be "on" in one instance
+						Label:
+							text: 'Normal'
+						CheckBox:
+							height: '48dp'
+							group: 'g2'
+							on_active: root.mirror(self.active)
+						Label:
+							text: 'Mirror'
+#------------------------------------------------------------------------------------------------------
+				# Second column of RGB sliders, RGB channel manipulators, and toggle button.
+				BoxLayout:
+					orientation: 'vertical'
+					# on_value means anytime the slider is moved.
+					Slider:
+						id: r
+						min: 0
+						max: 255
+						value: 255
+						on_value: root.rmod(int(self.value))
+					Label:
+						text: 'R Channel: {}'.format(r.value)
+					Slider:
+						id: g
+						min: 0
+						max: 255
+						value: 255
+						on_value: root.gmod(int(self.value))
+					Label:
+						text: 'G Channel: {}'.format(g.value) # here, you can use curly brackets followed by .format to fill in a value from the slider
+					Slider:
+						id: b
+						min: 0
+						max: 255
+						value: 255
+						on_value: root.bmod(int(self.value))
+					Label:
+						text: 'B Channel: {}'.format(b.value)
+					# You can use grid or horizontal box layout here. 
+					GridLayout:
+						cols: 2
+						# Toggle buttons, like radio checkboxes are grouped and will only have one on at any instance
+						ToggleButton:
+							id: original
+							height: '48dp'
+							text: 'Original'
+							group: 'g1'
+							on_state: root.show()
+						ToggleButton:
+							id: result
+							height: '48dp'
+							text: 'Result'
+							group: 'g1'
+							state: 'down'
+							on_state: root.show()
+					# Spinners are drop-down menus that when changed, trigger the on_text behavior.
+					Spinner:
+						id: spinner
+						orientation: 'vertical'
+						text: "RGB (Click to select)"
+						values: "RGB","BGR","GBR"
+						height: '24dp'
+						on_text: root.rgbroll(self.text) # self.text is the selected value
+					Button:
+						id: btn1
+						text: "Rotate Right"
+						on_release: root.rotate()
+	
+#--------------------------------------------------------------------------------------------------
+# Results: second accordian tab holds the image results
+		AccordionItem:
+			title: 'Image Result'
+			BoxLayout:
+				orientation: 'vertical'
+				Image:
+					id: image
+					source: "" # source is to be defined in Python code using self.ids.image.source
